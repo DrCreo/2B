@@ -26,5 +26,14 @@ namespace TwoB
                 return true;
             return false;
         }
+        /// <summary>
+        /// Returns a "true" or "false" lower case string depending on the bools state.
+        /// </summary>
+        /// <param name="_bool"></param>
+        /// <returns></returns>
+        public static string ToStrLow(this bool _bool)
+        {
+            return _bool.ToString().ToLower();
+        }
     }
 }
