@@ -1,5 +1,6 @@
 ﻿using System;
 using DSharpPlus;
+using System.Linq;
 
 namespace TwoB
 {
@@ -12,6 +13,18 @@ namespace TwoB
         public static void Log(this DebugLogger debugLogger, string aString)
         {
             Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] {aString}");
+        }
+
+        /// <summary>
+        /// Checks if the user is a bot developer.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public static bool IsDeveloper(this DiscordUser user)
+        {
+            if (BotConfig.Instance.Developers.Contains(user.ID))
+                return true;
+            return false;
         }
     }
 }

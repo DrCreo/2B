@@ -3,12 +3,13 @@ using DSharpPlus;
 using System.IO;
 using Newtonsoft.Json;
 using System.Reflection;
+using System;
 
 namespace TwoB
 {
     class Bot
     {
-        private BotConfig _botConfig { get; set; }
+        public BotConfig _botConfig { get; set; }
         private DiscordClient _client { get; set; }
 
         public async Task Start()
@@ -22,8 +23,15 @@ namespace TwoB
 
             // Connect our client
             this._client.DebugLogger.Log("Connecting.");
-            await this._client.Connect();
 
+            try
+            {
+                await this._client.Connect();
+            }
+            catch (Exception exc)
+            {
+                this._client.DebugLogger.Log(exc.Message);
+            }
             await Task.Delay(-1);
         }
 
@@ -61,22 +69,11 @@ namespace TwoB
 
         private void Initialize()
         {
-            var path = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            path = Path.Combine(path, "Config/config.json");
-
-            if (!File.Exists(path))
-                throw new FileNotFoundException($"'{path}' not found.");
-
-            var json = string.Empty;
-            using (var fileStream = File.OpenRead(path))
-            using (var streamReader = new StreamReader(fileStream))
-                json = streamReader.ReadToEnd();
-
-            _botConfig = JsonConvert.DeserializeObject<BotConfig>(json);
+            _botConfig = BotConfig.Instance;
 
             this._client = new DiscordClient(new DiscordConfig
             {
-                Token = this._botConfig.Token,
+                Token = BotConfig.Instance.Token,
                 TokenType = TokenType.Bot,
                 LogLevel = LogLevel.Debug,
                 AutoReconnect = true
