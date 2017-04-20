@@ -13,7 +13,7 @@ namespace TwoB
 {
     public static class MalHelper
     {
-        const string malThumbnail = "https://d3ieicw58ybon5.cloudfront.net/ex/610.191/u/c2ea270de7764fb1a92f60080d27b0da.jpg";
+        const string malThumbnail = "http://i.imgur.com/mo4I7Ff.jpg";
 
         public async static Task<DiscordEmbed> Anime(string search)
         {
@@ -24,6 +24,7 @@ namespace TwoB
 
             var eb = new DiscordEmbed()
             {
+                Thumbnail = new DiscordEmbedThumbnail() { Url = malThumbnail },
                 Color = 9545092,
                 Fields = new List<DiscordEmbedField>()
                 {

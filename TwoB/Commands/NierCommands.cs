@@ -1,11 +1,11 @@
 ﻿using System;
-using DSharpPlus.Commands;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Linq;
 
 namespace TwoB
 {
+    /*
     public class NierCommands
     {
         public void Init(CommandModule _commands)
@@ -28,4 +28,5 @@ namespace TwoB
             await e.Message.Respond(jo["basepath"].ToString() + jo["items"][0]["url"].ToString());
         }
     }
+    */
 }

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using DSharpPlus;
-using DSharpPlus.Commands;
+using DSharpPlus.CommandsNext;
 using Newtonsoft.Json.Linq;
 using System;
 
@@ -10,7 +10,7 @@ namespace TwoB
     {
         private BotConfig _botConfig { get; set; }
         private DiscordClient _client { get; set; }
-        private CommandModule _commands { get; set; }
+        private CommandsNextModule _commands { get; set; }
 
         public async Task Start()
         {
@@ -52,15 +52,30 @@ namespace TwoB
         // Lets install our commands
         private void InstallCommands()
         {
-            this._commands = this._client.UseCommands(new CommandConfig
+            var cncfg = new CommandsNextConfiguration
             {
-                Prefix = this._botConfig.Prefix,
-                SelfBot = false
-            });
+                Prefix = _botConfig.Prefix,
+                EnableDms = true,
+                EnableMentionPrefix = true,
+                EnableDefaultHelp = true
+            };
 
-            new NierCommands().Init(_commands);
-            new AnimeCommands().Init(_commands);
-            new InfoCommands().Init(_commands);
+            this._commands = this._client.UseCommandsNext(cncfg);
+            this._commands.CommandErrored += _commands_CommandErrored;
+            this._commands.CommandExecuted += _commands_CommandExecuted;
+            this._commands.RegisterCommands<AnimeCommands>();
+        }
+
+        private Task _commands_CommandExecuted(CommandExecutedEventArgs e)
+        {
+            this._client.DebugLogger.Log($"CommandsNext:  {e.Context.User.Username} executed {e.Command.Name} in {e.Context.Channel.Name} " + DateTime.Now);
+            return Task.Delay(0);
+        }
+
+        private Task _commands_CommandErrored(CommandErrorEventArgs e)
+        {
+            this._client.DebugLogger.Log($"CommandsNext Exception:  { e.Exception.GetType()}: { e.Exception.Message} " + DateTime.Now);
+            return Task.Delay(0);
         }
 
         // Lets set up our events

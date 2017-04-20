@@ -1,12 +1,11 @@
 ﻿using System;
-using DSharpPlus.Commands;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Linq;
 using DSharpPlus;
 
 namespace TwoB
-{
+{/*
     public class InfoCommands
     {
         public void Init(CommandModule _commands)
@@ -26,4 +25,5 @@ namespace TwoB
             await e.Message.Respond("", false, eb);
         }
     }
+    */
 }

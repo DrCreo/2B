@@ -1,5 +1,6 @@
 ﻿using System;
-using DSharpPlus.Commands;
+using DSharpPlus.CommandsNext;
+using DSharpPlus.CommandsNext.Attributes;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Linq;
@@ -10,39 +11,42 @@ namespace TwoB
     public class AnimeCommands
     {
         const string malThumnail = "http://i.imgur.com/mo4I7Ff.jpg";
-
-        public void Init(CommandModule _commands)
+        [Group("anime"), Aliases("a"), CanExecute, Description("Anime and Manga Commands.")]
+        public class AnimeMangaGroup
         {
-            _commands.AddCommand("animanga_top", async e => await GetTopArticle(e));
-            _commands.AddCommand("animanga_search", async e => await Search(e));
-            _commands.AddCommand("anime", async e => await SearchMalAnime(e));
-            _commands.AddCommand("manga", async e => await SearchMalManga(e));
-        }
 
-        private async Task Search(CommandEventArgs e)
-        {
-            Console.WriteLine(string.Join("+", e.Arguments));
-            var jo = JObject.Parse(await WikiaHelper.SearchWikia(WikiaHelper.WikiaType.Animanga, string.Join("+", e.Arguments)));
-            Console.WriteLine(jo.ToString());
-            await e.Message.Respond(jo["items"][0]["url"].ToString());
-        }
+            [Command("mal_anime"), Aliases("mala"), Description("Searches mal for anime.")]
+            public async Task SearchMalAnime(CommandContext context, [Description("Args to search")] params string[] searchargs)
+            {
+                var result = await MalHelper.Anime(string.Join("+", searchargs));
+                await context.Message.Respond("", false, result);
+            }
 
-        private async Task SearchMalAnime(CommandEventArgs e)
-        {
-            var result = await MalHelper.Anime(string.Join("+", e.Arguments));
-            await e.Message.Respond("", false, result);
-        }
+            [Command("mal_manga"), Aliases("malm"), Description("Searches mal for manga.")]
+            public async Task SearchMalManga(CommandContext context, [Description("Args to search")] params string[] searchargs)
+            {
+                var result = await MalHelper.Manga(string.Join("+", searchargs));
+                await context.Message.Respond("", false, result);
+            }
 
-        private async Task SearchMalManga(CommandEventArgs e)
-        {
-            var result = await MalHelper.Manga(string.Join("+", e.Arguments));
-            await e.Message.Respond("", false, result);
-        }
+            [Command("animanga_top"), Aliases("amtop"), Description("Returns the top article on the Animanga Wikia.")]
+            public async Task GetTopArticle(CommandContext context)
+            {
+                var jo = JObject.Parse(await WikiaHelper.GetTopArticles(WikiaHelper.WikiaType.Animanga));
+                await context.Message.Respond(jo["basepath"].ToString() + jo["items"][0]["url"].ToString());
+            }
 
-        private async Task GetTopArticle(CommandEventArgs e)
-        {
-            var jo = JObject.Parse(await WikiaHelper.GetTopArticles(WikiaHelper.WikiaType.Animanga));
-            await e.Message.Respond(jo["basepath"].ToString() + jo["items"][0]["url"].ToString());
+            [Command("animanga_search"), Aliases("asearch", "amsearch"), Description("Searches the Animanga wikia.")]
+            public async Task Search(CommandContext context, [Description("Args to search.")] params string[] searchArgs)
+            {
+                var jo = JObject.Parse(await WikiaHelper.SearchWikia(WikiaHelper.WikiaType.Animanga, string.Join("+", searchArgs)));
+                await context.Message.Respond(jo["items"][0]["url"].ToString());
+            }
+
+            public async Task ModuleCommand(CommandContext ctx)
+            {
+                await ctx.RespondAsync("Test﻿");
+            }
         }
     }
 }
