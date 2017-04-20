@@ -1,5 +1,9 @@
 {
   "token": "Your-Token",
   "prefix": "!",
-  "developers": [ 105455423691182080, 127408598010560513 ]
+  "developers": [ 105455423691182080, 127408598010560513 ],
+  "mal": {
+    "username": "user",
+    "pass" :  "pass"
+  }
 }

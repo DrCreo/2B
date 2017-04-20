@@ -17,6 +17,8 @@ namespace TwoB
         [JsonProperty("developers")]
         public ulong[] Developers { get; set; }
 
+        [JsonProperty("mal")]
+        public MalConfig Mal { get; set; }
 
         private static BotConfig instance;
 
@@ -47,6 +49,22 @@ namespace TwoB
                 json = streamReader.ReadToEnd();
 
             instance = JsonConvert.DeserializeObject<BotConfig>(json);
+        }
+
+        public class MalConfig
+        {
+            [JsonProperty("username")]
+            public string UserName { get; set; }
+            [JsonProperty("pass")]
+            public string Pass { get; set; }
+
+            public string credentials
+            {
+                get
+                {
+                    return $"{UserName}:{Pass}";
+                }
+            }
         }
     }
 }

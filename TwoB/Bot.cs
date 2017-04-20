@@ -77,12 +77,12 @@ namespace TwoB
                 await _client.UpdateStatus("Emotions are Prohibited");
             };
 
-            this._client.MessageCreated += async (e) =>
+            /*this._client.MessageCreated += async (e) =>
             {
                 // If the author is a bot return as we dont want to interact with bots.
                 if (e.Message.Author.IsBot)
                     return;
-            };
+            };*/
         }
 
     }

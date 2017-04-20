@@ -55,7 +55,7 @@ namespace TwoB
         {
             return BuildLink(wikia, $"Activity/LatestActivity/?limit={amount}&namespaces=0&allowDuplicates={allowDuplicates.ToStrLow()}");
         }
-
+        
         /// <summary>
         /// Gets a number of related Articles.
         /// </summary>
