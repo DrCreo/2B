@@ -6,54 +6,122 @@ using System.Text;
 using System.Net.Http.Headers;
 using System;
 using System.Text.RegularExpressions;
+using DSharpPlus;
+using System.Collections.Generic;
 
 namespace TwoB
 {
     public static class MalHelper
     {
-        public async static Task<string[]> Anime(string search)
+        const string malThumbnail = "https://d3ieicw58ybon5.cloudfront.net/ex/610.191/u/c2ea270de7764fb1a92f60080d27b0da.jpg";
+
+        public async static Task<DiscordEmbed> Anime(string search)
         {
             string[] result = { string.Empty, string.Empty };
             var doc = XDocument.Parse(await GetMalLinkAStringAsync($"https://myanimelist.net/api/anime/search.xml?q={search}"));
 
             var anime = doc.Descendants("anime").First();
 
-            result[0] += "**Title:** `" + anime.Descendants("title").First().Value + "`";
-            result[0] += "\n**English Title:** `" + anime.Descendants("english").First().Value + "`";
-            result[0] += "\n**Synonyms:** `" + anime.Descendants("synonyms").First().Value + "`";
-            result[0] += "\n**Episode count:** `" + anime.Descendants("episodes").First().Value + "`";
-            result[0] += "\n**Score:** `" + anime.Descendants("score").First().Value + "`";
-            result[0] += "\n**Type:** `" + anime.Descendants("type").First().Value + "`";
-            result[0] += "\n**Status:** `" + anime.Descendants("status").First().Value + "`";
-            result[0] += "\n**Start Date:** `" + anime.Descendants("start_date").First().Value + "`";
-            result[0] += "\n**End Date:** `" + anime.Descendants("end_date").First().Value + "`";
-            result[0] += "\n\n**Description:** \n" + StripHTML(anime.Descendants("synopsis").First().Value) + "\n";
-            result[1] += anime.Descendants("image").First().Value;
-
-            return result;
+            var eb = new DiscordEmbed()
+            {
+                Color = 9545092,
+                Fields = new List<DiscordEmbedField>()
+                {
+                    new DiscordEmbedField()
+                    {
+                        Name = "**"+anime.Descendants("title").First().Value+", "+anime.Descendants("english").First().Value+"**",
+                        Value = anime.Descendants("synonyms").First().Value
+                    },
+                    new DiscordEmbedField()
+                    {
+                        Name = "**Episode count:**",
+                        Value = anime.Descendants("episodes").First().Value,
+                        Inline = true
+                    },
+                    new DiscordEmbedField()
+                    {
+                        Name = "**Description**",
+                        Value = StripHTML(anime.Descendants("synopsis").First().Value)
+                    },
+                    new DiscordEmbedField()
+                    {
+                        Name = "**Date:**",
+                        Value = anime.Descendants("start_date").First().Value + "-" + anime.Descendants("end_date").First().Value,
+                        Inline = true
+                    },
+                    new DiscordEmbedField()
+                    {
+                        Name = "**Type:**",
+                        Value = anime.Descendants("type").First().Value,
+                        Inline = true
+                    },
+                    new DiscordEmbedField()
+                    {
+                        Name = "**Score:**",
+                        Value = anime.Descendants("score").First().Value,
+                        Inline = true
+                    }
+                },
+                Image = new DiscordEmbedImage() { Url = anime.Descendants("image").First().Value }
+            };
+            return eb;
         }
 
-        public async static Task<string[]> Manga(string search)
+        public async static Task<DiscordEmbed> Manga(string search)
         {
-            string[] result = { string.Empty, string.Empty };
             var doc = XDocument.Parse(await GetMalLinkAStringAsync($"https://myanimelist.net/api/manga/search.xml?q={search}"));
 
             var manga = doc.Descendants("manga").First();
 
-            result[0] += "**Title:** `" + manga.Descendants("title").First().Value + "`";
-            result[0] += "\n**English Title:** `" + manga.Descendants("english").First().Value + "`";
-            result[0] += "\n**Synonyms:** `" + manga.Descendants("synonyms").First().Value + "`";
-            result[0] += "\n**Chapter count:** `" + manga.Descendants("chapters").First().Value + "`";
-            result[0] += "\n**Volume count:** `" + manga.Descendants("volumes").First().Value + "`";
-            result[0] += "\n**Score:** `" + manga.Descendants("score").First().Value + "`";
-            result[0] += "\n**Type:** `" + manga.Descendants("type").First().Value + "`";
-            result[0] += "\n**Status:** `" + manga.Descendants("status").First().Value + "`";
-            result[0] += "\n**Start Date:** `" + manga.Descendants("start_date").First().Value + "`";
-            result[0] += "\n**End Date:** `" + manga.Descendants("end_date").First().Value + "`";
-            result[0] += "\n\n**Description:** \n" + StripHTML(manga.Descendants("synopsis").First().Value) + "\n";
-            result[1] += manga.Descendants("image").First().Value;
-
-            return result;
+            var eb = new DiscordEmbed()
+            {
+                Color = 9545092,
+                Fields = new List<DiscordEmbedField>()
+                {
+                    new DiscordEmbedField()
+                    {
+                        Name = "**"+manga.Descendants("title").First().Value+", "+manga.Descendants("english").First().Value+"**",
+                        Value = "" + manga.Descendants("synonyms").First().Value == ("") ? "N/A" : manga.Descendants("synonyms").First().Value
+                    },
+                    new DiscordEmbedField()
+                    {
+                        Name = "**Chapter | Volume count:**",
+                        Value = "" + manga.Descendants("chapters").First().Value + " | " + manga.Descendants("volumes").First().Value,
+                        Inline = true
+                    },
+                    new DiscordEmbedField()
+                    {
+                        Name = "**Status:**",
+                        Value = "" + manga.Descendants("status").First().Value,
+                        Inline = true
+                    },
+                    new DiscordEmbedField()
+                    {
+                        Name = "**Description**",
+                        Value = "" + (StripHTML(manga.Descendants("synopsis").First().Value.Count() > 2000 ? manga.Descendants("synopsis").First().Value.Remove(1500)+ "..." : manga.Descendants("synopsis").First().Value))
+                    },
+                    new DiscordEmbedField()
+                    {
+                        Name = "**Date:**",
+                        Value = "" + manga.Descendants("start_date").First().Value + "-" + manga.Descendants("end_date").First().Value,
+                        Inline = true
+                    },
+                    new DiscordEmbedField()
+                    {
+                        Name = "**Type:**",
+                        Value = "" + manga.Descendants("type").First().Value,
+                        Inline = true
+                    },
+                    new DiscordEmbedField()
+                    {
+                        Name = "**Score:**",
+                        Value = "" + manga.Descendants("score").First().Value,
+                        Inline = true
+                    }
+                },
+                Image = new DiscordEmbedImage() { Url = manga.Descendants("image").First().Value }
+            };
+            return eb;
         }
 
         private static async Task<string> GetMalLinkAStringAsync(string link)
@@ -69,7 +137,7 @@ namespace TwoB
 
         public static string StripHTML(string input)
         {
-            return Regex.Replace(input, "(?:<style.+?>.+?</style>|<script.+?>.+?</script>|<(?:!|/?[a-‌​zA-Z]+).*?/?>)", String.Empty).Replace("[i]","").Replace("[/i]","");
+            return Regex.Replace(input, "(?:<style.+?>.+?</style>|<script.+?>.+?</script>|<(?:!|/?[a-‌​zA-Z]+).*?/?>)", String.Empty).Replace("[i]", "").Replace("[/i]", "");
         }
     }
 }

@@ -9,6 +9,8 @@ namespace TwoB
 {
     public class AnimeCommands
     {
+        const string malThumnail = "http://i.imgur.com/mo4I7Ff.jpg";
+
         public void Init(CommandModule _commands)
         {
             _commands.AddCommand("animanga_top", async e => await GetTopArticle(e));
@@ -28,16 +30,13 @@ namespace TwoB
         private async Task SearchMalAnime(CommandEventArgs e)
         {
             var result = await MalHelper.Anime(string.Join("+", e.Arguments));
-            Console.WriteLine(result[1]);
-            var eb = new DiscordEmbed() { Color = 9545092, Description = result[0], Image = new DiscordEmbedImage() { Url = result[1]} };
-            await e.Message.Respond("",false , eb);
+            await e.Message.Respond("", false, result);
         }
 
         private async Task SearchMalManga(CommandEventArgs e)
         {
             var result = await MalHelper.Manga(string.Join("+", e.Arguments));
-            var eb = new DiscordEmbed() { Color = 9545092, Description = result[0], Image = new DiscordEmbedImage() { Url = result[1] } };
-            await e.Message.Respond("", false, eb);
+            await e.Message.Respond("", false, result);
         }
 
         private async Task GetTopArticle(CommandEventArgs e)
