@@ -17,10 +17,12 @@ namespace TwoB
             await _context.Channel.SendMessage($"**Socket latency:** {_context.Client.Ping}ms");
         }
 
+        /*
         [Command("help") , Description("Sends help.")]
         public async Task Help(CommandContext _Context)
         {
             await _Context.Message.Respond("No help for you.");
         }
+        */
     }
 }
