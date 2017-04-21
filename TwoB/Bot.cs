@@ -22,6 +22,8 @@ namespace TwoB
             InstallCommands();
             _client.UseInteractivity();
 
+            
+
             // Connect our client
             this._client.DebugLogger.Log("Connecting.");
 
@@ -64,17 +66,11 @@ namespace TwoB
 
             this._commands = this._client.UseCommandsNext(cncfg);
             this._commands.CommandErrored += _commands_CommandErrored;
-            this._commands.CommandExecuted += _commands_CommandExecuted;
             this._commands.RegisterCommands<AnimeCommands>();
             this._commands.RegisterCommands<InfoCommands>();
             this._commands.RegisterCommands<NierCommands>();
         }
 
-        private Task _commands_CommandExecuted(CommandExecutedEventArgs e)
-        {
-            this._client.DebugLogger.Log($"CommandsNext:  {e.Context.User.Username} executed {e.Command.Name} in {e.Context.Channel.Name} " + DateTime.Now);
-            return Task.Delay(0);
-        }
 
         private Task _commands_CommandErrored(CommandErrorEventArgs e)
         {
@@ -87,22 +83,23 @@ namespace TwoB
         {
             this._client.DebugLogger.Log("Setting up events.");
 
+            this._client.SocketClosed += _client_SocketClosed;
+
             this._client.Ready += async () =>
             {
                 this._client.DebugLogger.Log("Ready");
                 this._client.DebugLogger.Log($"Current user is '{_client.Me.Username}' which is connected to {_client.Guilds.Count} Guild(s).");
+                
 
                 // Lets set the Status to something.
                 await _client.UpdateStatus("Emotions are Prohibited");
             };
-
-            /*this._client.MessageCreated += async (e) =>
-            {
-                // If the author is a bot return as we dont want to interact with bots.
-                if (e.Message.Author.IsBot)
-                    return;
-            };*/
         }
 
+        private Task _client_SocketClosed()
+        {
+            _client.DebugLogger.Log("Socket closed");
+            return Task.Delay(0);
+        }
     }
 }
