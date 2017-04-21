@@ -83,6 +83,10 @@ namespace TwoB
         {
             this._client.DebugLogger.Log("Setting up events.");
 
+            this._client.HeartBeated += _client_HeartBeated;
+
+            this._client.SocketOpened += _client_SocketOpened;
+
             this._client.SocketClosed += _client_SocketClosed;
 
             this._client.Ready += async () =>
@@ -94,6 +98,18 @@ namespace TwoB
                 // Lets set the Status to something.
                 await _client.UpdateStatus("Emotions are Prohibited");
             };
+        }
+
+        private Task _client_SocketOpened()
+        {
+            _client.DebugLogger.Log("Socket opened");
+            return Task.Delay(0);
+        }
+
+        private Task _client_HeartBeated(HeartBeatEventArgs e)
+        {
+            _client.DebugLogger.Log($"Heart Beat: {e.Ping}ms");
+            return Task.Delay(0);
         }
 
         private Task _client_SocketClosed()

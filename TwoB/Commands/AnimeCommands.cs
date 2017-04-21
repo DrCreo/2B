@@ -58,7 +58,7 @@ namespace TwoB
             public async Task Waifu(CommandContext context)
             {
                 Random rng = new Random();
-                var waifu = WaifuDB.DB.Waifus[rng.Next(WaifuDB.DB.Waifus.Count - 1)];
+                var waifu = WaifuDB.DB.Waifus[rng.Next(WaifuDB.DB.Waifus.Count)];
                 DiscordEmbed eb = new DiscordEmbed()
                 {
                     Title = "Guess the Waifu!",
