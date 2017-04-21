@@ -76,6 +76,7 @@ namespace TwoB
 
             var eb = new DiscordEmbed()
             {
+                Thumbnail = new DiscordEmbedThumbnail() { Url = malThumbnail },
                 Color = 9545092,
                 Fields = new List<DiscordEmbedField>()
                 {
@@ -128,7 +129,7 @@ namespace TwoB
         private static async Task<string> GetMalLinkAStringAsync(string link)
         {
             var httpClient = new HttpClient();
-            var byteArray = Encoding.ASCII.GetBytes(BotConfig.Instance.Mal.credentials);
+            var byteArray = Encoding.ASCII.GetBytes(BotConfig.Instance.Mal.Credentials);
             var header = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
             httpClient.DefaultRequestHeaders.Authorization = header;
             var response = await httpClient.GetAsync(link);

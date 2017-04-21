@@ -3,27 +3,24 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Linq;
 using DSharpPlus;
+using DSharpPlus.CommandsNext;
+using DSharpPlus.CommandsNext.Attributes;
 
 namespace TwoB
-{/*
+{
     public class InfoCommands
     {
-        public void Init(CommandModule _commands)
+
+        [Command("ping"), Description("Returns the Socket latency.")]
+        public async Task ping(CommandContext _context)
         {
-            _commands.AddCommand("help", async e => await Help(e));
-            _commands.AddCommand("ping", async e => await ping(e, _commands.Client));
+            await _context.Channel.SendMessage($"**Socket latency:** {_context.Client.Ping}ms");
         }
 
-        private async Task ping(CommandEventArgs e, DiscordClient _client)
+        [Command("help") , Description("Sends help.")]
+        public async Task Help(CommandContext _Context)
         {
-            await e.Channel.SendMessage($"**Socket latency:** {_client.Ping}ms");
-        }
-
-        private async Task Help(CommandEventArgs e)
-        {
-            var eb = new DiscordEmbed() { Color = 4589319, Description = "**OS Chip Functionality:** \n\n**Info**\n;ping \n\n**Nier**\n;nier_search <arg>\n;nier_top \n\n **Anime & Manga**\n;animanga_search <arg> \n;animanga_top" };
-            await e.Message.Respond("", false, eb);
+            await _Context.Message.Respond("No help for you.");
         }
     }
-    */
 }

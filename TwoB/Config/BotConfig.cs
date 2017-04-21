@@ -58,7 +58,7 @@ namespace TwoB
             [JsonProperty("pass")]
             public string Pass { get; set; }
 
-            public string credentials
+            public string Credentials
             {
                 get
                 {

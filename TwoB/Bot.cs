@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.Interactivity;
 using Newtonsoft.Json.Linq;
 using System;
 
@@ -19,6 +20,7 @@ namespace TwoB
             Initialize();
             SetUpEvents();
             InstallCommands();
+            _client.UseInteractivity();
 
             // Connect our client
             this._client.DebugLogger.Log("Connecting.");
@@ -64,6 +66,8 @@ namespace TwoB
             this._commands.CommandErrored += _commands_CommandErrored;
             this._commands.CommandExecuted += _commands_CommandExecuted;
             this._commands.RegisterCommands<AnimeCommands>();
+            this._commands.RegisterCommands<InfoCommands>();
+            this._commands.RegisterCommands<NierCommands>();
         }
 
         private Task _commands_CommandExecuted(CommandExecutedEventArgs e)

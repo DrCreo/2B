@@ -1,0 +1,94 @@
+﻿{
+  "waifus": [
+    {
+      "name": "Rem",
+      "aliases": [ "Remu" ],
+      "origin": [ "Re:Zero", "Re:Zero − Starting Life in Another World" ],
+      "image": "http://static.zerochan.net/Rem.%28Re%3AZero%29.full.2010867.jpg"
+    },
+    {
+      "name": "Saiko",
+      "aliases": [ "Saiko Yonebayashi", "Yonebayashi Saiko" ],
+      "origin": [ "Tokyo Ghoul" ],
+      "image": "https://cdn.discordapp.com/attachments/146044397861994496/304997523045744641/54131702_p0.jpg"
+    },
+    {
+      "name": "Frandre Scarlet",
+      "aliases": [ "Frandle Scarlet", "Frandre", "Frandoll Scarlet", "Frandoll", "Frandle" ],
+      "origin": [ "Touhou" ],
+      "image": "https://cdn.discordapp.com/attachments/146044397861994496/304997602116501515/60481351_p0_master1200.jpg"
+    },
+    {
+      "name": "2B",
+      "aliases": [ "2E", "Type B Model 2", "Type E Model 2" ],
+      "origin": [ "Nier;Automata" ],
+      "image": "https://cdn.discordapp.com/attachments/146044397861994496/304997693472636939/62038306_p0.png"
+    },
+    {
+      "name": "Shiro",
+      "aliases": [ "Blank", "『　』" ],
+      "origin": [ "No Game No Life" ],
+      "image": "https://cdn.discordapp.com/attachments/146044397861994496/305009809218994176/latest.png"
+    },
+    {
+      "name": "Chiaki Nanami",
+      "aliases": [ "Nanami", "Chiaki" ],
+      "origin": [ "Danganronpa" ],
+      "image": "https://cdn.discordapp.com/attachments/146044397861994496/305009368456495104/eee9605b-ac51-4435-8107-e042830a103c.png"
+    },
+    {
+      "name": "Aki Adagaki",
+      "aliases": [ "Aki", "Adakagi", "Adagaki Aki", "\tThe Brutal Princess" ],
+      "origin": [ "Masamune-kun no Revenge." ],
+      "image": "https://vignette2.wikia.nocookie.net/masamunekuns-revenge/images/8/81/Adagaki_Profile.png/revision/latest?cb=20160719135444"
+    },
+    {
+      "name": "Chinatsu Hayase",
+      "aliases": [ "Chinatsu", "Hayase Chinatsu" ],
+      "origin": [ "Masamune-kun no Revenge." ],
+      "image": "http://vignette1.wikia.nocookie.net/animevice/images/c/c4/Chinatsu_Hayase_Stitched_%28Masamune%27s_Revenge_Ep_6%29.png/revision/latest?cb=20170211114434"
+    },
+    {
+      "name": "Neko Fujinomiya",
+      "aliases": [ "Fujinomiya Yasuko", "Panty less girl", "Neko" ],
+      "origin": [ "Masamune-kun no Revenge." ],
+      "image": "http://vignette1.wikia.nocookie.net/animevice/images/9/94/Neko_Fujinomiya_Stitched_%28Masamune%27s_Revenge_Ep_5%29.png/revision/latest?cb=20170203080655"
+    },
+    {
+      "name": "Yoshino Koiwai",
+      "aliases": [ "Yoshino", "Koiwai Yoshino" ],
+      "origin": [ "Masamune-kun no Revenge" ],
+      "image": "https://vignette4.wikia.nocookie.net/masamunekuns-revenge/images/3/3e/Yoshino.png/revision/latest?cb=20160718204731"
+    },
+    {
+      "name": "Shinka Nibutani",
+      "aliases": [ "Shinka", "Nibutani Shinka" ],
+      "origin": [ "Chuunibyou Demo koi ga Shitai1" ],
+      "image": "https://vignette3.wikia.nocookie.net/chuunibyou-demo-koi-ga-shitai/images/9/98/Chuu_%28137%29.png/revision/latest?cb=20160914220846"
+    },
+    {
+      "name": "Rin Shibuya",
+      "aliases": [ "Rin", "Shibuya Rin", "Shibuya" ],
+      "origin": [ "Idolmaster Cinderella Girls" ],
+      "image": "http://static.zerochan.net/Shibuya.Rin.full.1873382.jpg"
+    },
+    {
+      "name": "Aqua",
+      "aliases": [ "Akua" ],
+      "origin": [ "Konosuba" ],
+      "image": "https://media.giphy.com/media/X0SHtbBN0Vax2/giphy.gif"
+    },
+    {
+      "name": "Megumin",
+      "aliases": [ "Megu" ],
+      "origin": [ "Konosuba" ],
+      "image": "https://thumbs.gfycat.com/FrankShortBittern-size_restricted.gif"
+    },
+    {
+      "name": "Darkness",
+      "aliases": [ "Dasutinesu Foodo Raratiina" ],
+      "origin": [ "Konosuba" ],
+      "image": "https://2ch.hk/news/arch/2016-03-23/src/123466/14587565987520.jpg1"
+    }
+  ]
+}

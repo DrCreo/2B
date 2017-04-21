@@ -1,32 +1,26 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using System.Linq;
+using DSharpPlus.CommandsNext;
+using DSharpPlus.CommandsNext.Attributes;
 
 namespace TwoB
 {
-    /*
+
     public class NierCommands
     {
-        public void Init(CommandModule _commands)
+        [Command("nier_search"), Description("Searches the nier Wikia."), Aliases("snier")]
+        public async Task Search(CommandContext _context, [Description("Args to search.")] params string[] searchArgs)
         {
-            _commands.AddCommand("nier_top", async e => await GetTopArticle(e));
-            _commands.AddCommand("nier_search", async e => await Search(e));
+            var jo = JObject.Parse(await WikiaHelper.SearchWikia(WikiaHelper.WikiaType.Nier, string.Join("+", searchArgs)));
+            await _context.Message.Respond(jo["items"][0]["url"].ToString());
         }
 
-        private async Task Search(CommandEventArgs e)
-        {
-            Console.WriteLine(string.Join("+", e.Arguments));
-            var jo = JObject.Parse(await WikiaHelper.SearchWikia(WikiaHelper.WikiaType.Nier, string.Join("+", e.Arguments)));
-            Console.WriteLine(jo.ToString());
-            await e.Message.Respond(jo["items"][0]["url"].ToString());
-        }
-
-        private async Task GetTopArticle(CommandEventArgs e)
+        [Command("nier_top"), Description("Returns the top Article on the Nier Wikia."), Aliases("tnier")]
+        public async Task GetTopArticle(CommandContext _context)
         {
             var jo = JObject.Parse(await WikiaHelper.GetTopArticles(WikiaHelper.WikiaType.Nier));
-            await e.Message.Respond(jo["basepath"].ToString() + jo["items"][0]["url"].ToString());
+            await _context.Message.Respond(jo["basepath"].ToString() + jo["items"][0]["url"].ToString());
         }
     }
-    */
 }
