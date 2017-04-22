@@ -6,9 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DSharpPlus" Version="2.0.0-rc7" />
-    <PackageReference Include="DSharpPlus.CommandsNext" Version="2.0.0-rc7" />
-    <PackageReference Include="DSharpPlus.Interactivity" Version="2.0.0-rc7" />
+    <PackageReference Include="DSharpPlus" Version="2.0.0-rc8" />
+    <PackageReference Include="DSharpPlus.CommandsNext" Version="2.0.0-rc8" />
+    <PackageReference Include="DSharpPlus.Interactivity" Version="2.0.0-rc8" />
   </ItemGroup>
 
   <ItemGroup>
