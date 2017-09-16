@@ -1,9 +1,7 @@
-﻿using System;
-using DSharpPlus;
+﻿using DSharpPlus;
+using DSharpPlus.Entities;
+using System;
 using System.Linq;
-using Newtonsoft.Json;
-using System.Threading.Tasks;
-using System.IO;
 
 namespace TwoB
 {
@@ -25,7 +23,7 @@ namespace TwoB
         /// <returns></returns>
         public static bool IsDeveloper(this DiscordUser user)
         {
-            if (BotConfig.Instance.Developers.Contains(user.ID))
+            if (BotConfig.Instance.Developers.Contains(user.Id))
                 return true;
             return false;
         }

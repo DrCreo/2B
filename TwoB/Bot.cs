@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
-using DSharpPlus;
+﻿using DSharpPlus;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.Entities;
+using DSharpPlus.EventArgs;
 using DSharpPlus.Interactivity;
-using Newtonsoft.Json.Linq;
 using System;
+using System.Threading.Tasks;
 
 namespace TwoB
 {
@@ -29,7 +30,7 @@ namespace TwoB
 
             try
             {
-                await this._client.Connect();
+                await this._client.ConnectAsync();
             }
             catch (Exception exc)
             {
@@ -43,7 +44,7 @@ namespace TwoB
         {
             _botConfig = BotConfig.Instance;
 
-            this._client = new DiscordClient(new DiscordConfig
+            this._client = new DiscordClient(new DiscordConfiguration
             {
                 Token = _botConfig.Token,
                 TokenType = TokenType.Bot,
@@ -58,7 +59,7 @@ namespace TwoB
         {
             var cncfg = new CommandsNextConfiguration
             {
-                Prefix = _botConfig.Prefix,
+                StringPrefix = _botConfig.Prefix,
                 EnableDms = true,
                 EnableMentionPrefix = true,
                 EnableDefaultHelp = true
@@ -83,20 +84,19 @@ namespace TwoB
         {
             this._client.DebugLogger.Log("Setting up events.");
 
-            this._client.HeartBeated += _client_HeartBeated;
+            this._client.Heartbeated += _client_HeartBeated;
 
             this._client.SocketOpened += _client_SocketOpened;
 
-            this._client.SocketClosed += _client_SocketClosed;
 
-            this._client.Ready += async () =>
+            this._client.Ready += async (e) =>
             {
                 this._client.DebugLogger.Log("Ready");
-                this._client.DebugLogger.Log($"Current user is '{_client.Me.Username}' which is connected to {_client.Guilds.Count} Guild(s).");
+                this._client.DebugLogger.Log($"Current user is '{_client.CurrentUser.Username}' which is connected to {_client.Guilds.Count} Guild(s).");
                 
 
                 // Lets set the Status to something.
-                await _client.UpdateStatus("Emotions are Prohibited");
+                await _client.UpdateStatusAsync(new Game("Emotions are Prohibited"));
             };
         }
 
@@ -106,7 +106,7 @@ namespace TwoB
             return Task.Delay(0);
         }
 
-        private Task _client_HeartBeated(HeartBeatEventArgs e)
+        private Task _client_HeartBeated(HeartbeatEventArgs e)
         {
             _client.DebugLogger.Log($"Heart Beat: {e.Ping}ms");
             return Task.Delay(0);

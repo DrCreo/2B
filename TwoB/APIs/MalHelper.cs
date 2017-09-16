@@ -1,13 +1,12 @@
-﻿using System.Linq;
+﻿using DSharpPlus.Entities;
+using System;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Net.Http.Headers;
-using System;
-using System.Text.RegularExpressions;
-using DSharpPlus;
-using System.Collections.Generic;
 
 namespace TwoB
 {
@@ -22,49 +21,38 @@ namespace TwoB
 
             var anime = doc.Descendants("anime").First();
 
-            var eb = new DiscordEmbed()
+            var eb = new DiscordEmbedBuilder()
             {
-                Thumbnail = new DiscordEmbedThumbnail() { Url = malThumbnail },
-                Color = 9545092,
-                Fields = new List<DiscordEmbedField>()
-                {
-                    new DiscordEmbedField()
-                    {
-                        Name = "**"+anime.Descendants("title").First().Value+", "+anime.Descendants("english").First().Value+"**",
-                        Value = anime.Descendants("synonyms").First().Value
-                    },
-                    new DiscordEmbedField()
-                    {
-                        Name = "**Episode count:**",
-                        Value = anime.Descendants("episodes").First().Value,
-                        Inline = true
-                    },
-                    new DiscordEmbedField()
-                    {
-                        Name = "**Description**",
-                        Value = StripHTML(anime.Descendants("synopsis").First().Value)
-                    },
-                    new DiscordEmbedField()
-                    {
-                        Name = "**Date:**",
-                        Value = anime.Descendants("start_date").First().Value + "-" + anime.Descendants("end_date").First().Value,
-                        Inline = true
-                    },
-                    new DiscordEmbedField()
-                    {
-                        Name = "**Type:**",
-                        Value = anime.Descendants("type").First().Value,
-                        Inline = true
-                    },
-                    new DiscordEmbedField()
-                    {
-                        Name = "**Score:**",
-                        Value = anime.Descendants("score").First().Value,
-                        Inline = true
-                    }
-                },
-                Image = new DiscordEmbedImage() { Url = anime.Descendants("image").First().Value }
-            };
+                ThumbnailUrl = malThumbnail,
+                Color = new DiscordColor(9545092),
+                ImageUrl = anime.Descendants("image").First().Value
+            }
+            .AddField(
+                "**" + anime.Descendants("title").First().Value + ", " + anime.Descendants("english").First().Value + "**",
+                "" + anime.Descendants("synonyms").First().Value)
+            .AddField(
+                "**Episode count:**",
+                "" + anime.Descendants("episodes").First().Value,
+                true)
+            .AddField(
+                "**Status:**",
+                "" + anime.Descendants("status").First().Value,
+                true)
+            .AddField(
+                "**Description**",
+                "" + (StripHTML(anime.Descendants("synopsis").First().Value.Count() > 2000 ? anime.Descendants("synopsis").First().Value.Remove(1500) + "..." : anime.Descendants("synopsis").First().Value)))
+            .AddField(
+                "**Date:**",
+                "" + anime.Descendants("start_date").First().Value + "-" + anime.Descendants("end_date").First().Value,
+                true)
+            .AddField(
+                "**Type:**",
+                "" + anime.Descendants("type").First().Value,
+                true)
+            .AddField(
+                "**Score:**",
+                "" + anime.Descendants("score").First().Value,
+                true);
             return eb;
         }
 
@@ -74,55 +62,38 @@ namespace TwoB
 
             var manga = doc.Descendants("manga").First();
 
-            var eb = new DiscordEmbed()
+            var eb = new DiscordEmbedBuilder()
             {
-                Thumbnail = new DiscordEmbedThumbnail() { Url = malThumbnail },
-                Color = 9545092,
-                Fields = new List<DiscordEmbedField>()
-                {
-                    new DiscordEmbedField()
-                    {
-                        Name = "**"+manga.Descendants("title").First().Value+", "+manga.Descendants("english").First().Value+"**",
-                        Value = "" + manga.Descendants("synonyms").First().Value == ("") ? "N/A" : manga.Descendants("synonyms").First().Value
-                    },
-                    new DiscordEmbedField()
-                    {
-                        Name = "**Chapter | Volume count:**",
-                        Value = "" + manga.Descendants("chapters").First().Value + " | " + manga.Descendants("volumes").First().Value,
-                        Inline = true
-                    },
-                    new DiscordEmbedField()
-                    {
-                        Name = "**Status:**",
-                        Value = "" + manga.Descendants("status").First().Value,
-                        Inline = true
-                    },
-                    new DiscordEmbedField()
-                    {
-                        Name = "**Description**",
-                        Value = "" + (StripHTML(manga.Descendants("synopsis").First().Value.Count() > 2000 ? manga.Descendants("synopsis").First().Value.Remove(1500)+ "..." : manga.Descendants("synopsis").First().Value))
-                    },
-                    new DiscordEmbedField()
-                    {
-                        Name = "**Date:**",
-                        Value = "" + manga.Descendants("start_date").First().Value + "-" + manga.Descendants("end_date").First().Value,
-                        Inline = true
-                    },
-                    new DiscordEmbedField()
-                    {
-                        Name = "**Type:**",
-                        Value = "" + manga.Descendants("type").First().Value,
-                        Inline = true
-                    },
-                    new DiscordEmbedField()
-                    {
-                        Name = "**Score:**",
-                        Value = "" + manga.Descendants("score").First().Value,
-                        Inline = true
-                    }
-                },
-                Image = new DiscordEmbedImage() { Url = manga.Descendants("image").First().Value }
-            };
+                ThumbnailUrl = malThumbnail,
+                Color = new DiscordColor(9545092),
+                ImageUrl = manga.Descendants("image").First().Value
+            }
+            .AddField(
+                "**" + manga.Descendants("title").First().Value + ", " + manga.Descendants("english").First().Value + "**",
+                "" + manga.Descendants("synonyms").First().Value == ("") ? "N/A" : manga.Descendants("synonyms").First().Value)
+            .AddField(
+                "**Chapter | Volume count:**",
+                "" + manga.Descendants("chapters").First().Value + " | " + manga.Descendants("volumes").First().Value,
+                true)
+            .AddField(
+                "**Status:**",
+                "" + manga.Descendants("status").First().Value,
+                true)
+            .AddField(
+                "**Description**",
+                "" + (StripHTML(manga.Descendants("synopsis").First().Value.Count() > 2000 ? manga.Descendants("synopsis").First().Value.Remove(1500) + "..." : manga.Descendants("synopsis").First().Value)))
+            .AddField(
+                "**Date:**",
+                "" + manga.Descendants("start_date").First().Value + "-" + manga.Descendants("end_date").First().Value,
+                true)
+            .AddField(
+                "**Type:**",
+                "" + manga.Descendants("type").First().Value,
+                true)
+            .AddField(
+                "**Score:**",
+                "" + manga.Descendants("score").First().Value,
+                true);
             return eb;
         }
 
