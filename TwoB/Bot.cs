@@ -30,14 +30,9 @@ namespace TwoB
             // Connect our client
             this._client.DebugLogger.Log("Connecting.");
 
-            try
-            {
-                await this._client.ConnectAsync();
-            }
-            catch (Exception exc)
-            {
-                this._client.DebugLogger.Log(exc.StackTrace);
-            }
+
+            await this._client.ConnectAsync();
+
             await Task.Delay(-1);
         }
 
@@ -91,6 +86,7 @@ namespace TwoB
 
             this._client.SocketOpened += _client_SocketOpened;
 
+
             this._client.Ready += async (e) =>
             {
                 this._client.DebugLogger.Log("Ready");
@@ -98,17 +94,23 @@ namespace TwoB
 
                 SetupMusicModule();
 
-            // Lets set the Status to something.
-            await _client.UpdateStatusAsync(new Game("Emotions are Prohibited"));
+                // Lets set the Status to something.
+                await _client.UpdateStatusAsync(new Game("Emotions are Prohibited"));
             };
+
 
             this._client.MessageCreated += async (e) =>
             {
-                if (e.Message.Content.ToLower() == "<restart music" && e.Author.IsDeveloper())
+                if (e.Message.Content.ToLower() == $"{BotConfig.Instance.Prefix}restart mm" && e.Author.IsDeveloper())
                 {
-                    await e.Message.RespondAsync("Restarting now.");
+                    await e.Message.RespondAsync("Restarting Music Module now.");
 
-                    _musMod.EmergencyRestart();
+                    _musMod.EmergencyDisconnect();
+                    await Task.Delay(5000);
+                    _musMod = null;
+                    _musMod = new MusicModule();
+                    _musMod.StartMusicModule();
+                    await e.Message.RespondAsync("Restart Complete.");
                 }
             };
         }
