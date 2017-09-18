@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,6 +21,8 @@ namespace TwoB
         private List<VoiceNextConnection> _vncActiveList { get; set; }
         private AudioSenderManager _asManager { get; set; }
 
+        bool isWindows;
+        bool isLinux;
 
         /// <summary>
         /// Used to exit the music loop.
@@ -32,6 +35,10 @@ namespace TwoB
         /// </summary>
         public async void StartMusicModule()
         {
+
+            isWindows = System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            isLinux = System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+
             _client = BotConfig.Instance.Client;
             SetupVoiceNextClient();
             await ConnectToVoiceChannels();
@@ -199,7 +206,11 @@ namespace TwoB
         /// <param name="currentSong"></param>
         private async void UpdatePlayingStatus(string currentSong)
         {
-            var strings = currentSong.Split('\\');
+            string[] strings; 
+            if (isWindows)
+                strings = currentSong.Split('\\');
+            else
+                strings = currentSong.Split('/');
             await _client.UpdateStatusAsync(new Game($"{strings[strings.Length - 1].Split('.')[0]} ~ [{_vncActiveList.Count}/{_vncList.Count}] Active Music Channels."));
         }
 
