@@ -10,10 +10,14 @@ namespace TwoB
 {
     class Bot
     {
-        private BotConfig _botConfig { get; set; }
         private DiscordClient _client { get; set; }
         private CommandsNextModule _commands { get; set; }
+        private MusicModule _musMod { get; set; }
 
+        /// <summary>
+        /// Starts the Bot.
+        /// </summary>
+        /// <returns></returns>
         public async Task Start()
         {
 
@@ -22,8 +26,6 @@ namespace TwoB
             SetUpEvents();
             InstallCommands();
             _client.UseInteractivity();
-
-            
 
             // Connect our client
             this._client.DebugLogger.Log("Connecting.");
@@ -39,47 +41,48 @@ namespace TwoB
             await Task.Delay(-1);
         }
 
-        // lets Initialize the _botConfig and _client
+        /// <summary>
+        /// Initialized the DiscordClient
+        /// </summary>
         private void Initialize()
         {
-            _botConfig = BotConfig.Instance;
-
             this._client = new DiscordClient(new DiscordConfiguration
             {
-                Token = _botConfig.Token,
+                Token = BotConfig.Instance.Token,
                 TokenType = TokenType.Bot,
                 LogLevel = LogLevel.Debug,
                 AutoReconnect = true
             });
             this._client.DebugLogger.Log("Initialized.");
+
+            // Pass a refrence to the DiscordClient to the BotConfig singleton
+            BotConfig.Instance.Client = this._client;
+
         }
 
-        // Lets install our commands
+        /// <summary>
+        /// Installs Commands.
+        /// </summary>
         private void InstallCommands()
         {
             var cncfg = new CommandsNextConfiguration
             {
-                StringPrefix = _botConfig.Prefix,
+                StringPrefix = BotConfig.Instance.Prefix,
                 EnableDms = true,
                 EnableMentionPrefix = true,
                 EnableDefaultHelp = true
             };
 
             this._commands = this._client.UseCommandsNext(cncfg);
-            this._commands.CommandErrored += _commands_CommandErrored;
             this._commands.RegisterCommands<AnimeCommands>();
             this._commands.RegisterCommands<InfoCommands>();
             this._commands.RegisterCommands<NierCommands>();
         }
 
 
-        private Task _commands_CommandErrored(CommandErrorEventArgs e)
-        {
-            this._client.DebugLogger.Log($"CommandsNext Exception:  { e.Exception.GetType()}: { e.Exception.Message} " + DateTime.Now);
-            return Task.Delay(0);
-        }
-
-        // Lets set up our events
+        /// <summary>
+        /// Sets up Discord Events.
+        /// </summary>
         private void SetUpEvents()
         {
             this._client.DebugLogger.Log("Setting up events.");
@@ -88,30 +91,63 @@ namespace TwoB
 
             this._client.SocketOpened += _client_SocketOpened;
 
-
             this._client.Ready += async (e) =>
             {
                 this._client.DebugLogger.Log("Ready");
                 this._client.DebugLogger.Log($"Current user is '{_client.CurrentUser.Username}' which is connected to {_client.Guilds.Count} Guild(s).");
-                
 
-                // Lets set the Status to something.
-                await _client.UpdateStatusAsync(new Game("Emotions are Prohibited"));
+                SetupMusicModule();
+
+            // Lets set the Status to something.
+            await _client.UpdateStatusAsync(new Game("Emotions are Prohibited"));
+            };
+
+            this._client.MessageCreated += async (e) =>
+            {
+                if (e.Message.Content.ToLower() == "<restart music" && e.Author.IsDeveloper())
+                {
+                    await e.Message.RespondAsync("Restarting now.");
+
+                    _musMod.EmergencyRestart();
+                }
             };
         }
 
+
+        /// <summary>
+        /// Setup the MusicModule
+        /// </summary>
+        private void SetupMusicModule()
+        {
+            _musMod = new MusicModule();
+            _musMod.StartMusicModule();
+        }
+
+        /// <summary>
+        /// DiscordClient Socket Opened Event. 
+        /// </summary>
+        /// <returns></returns>
         private Task _client_SocketOpened()
         {
             _client.DebugLogger.Log("Socket opened");
             return Task.Delay(0);
         }
 
+        /// <summary>
+        /// DiscordClient Heart Beated Event.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
         private Task _client_HeartBeated(HeartbeatEventArgs e)
         {
             _client.DebugLogger.Log($"Heart Beat: {e.Ping}ms");
             return Task.Delay(0);
         }
 
+        /// <summary>
+        /// DiscordClient Socket Closed Event.
+        /// </summary>
+        /// <returns></returns>
         private Task _client_SocketClosed()
         {
             _client.DebugLogger.Log("Socket closed");

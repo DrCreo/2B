@@ -243,3 +243,8 @@ ModelManifest.xml
 
 # Config files
 Config/config.json
+
+# libs and executables
+libopus.dll
+libsodium.dll
+ffmpeg.exe

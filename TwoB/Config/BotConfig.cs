@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DSharpPlus;
+using Newtonsoft.Json;
 using System.IO;
 using System.Reflection;
 
@@ -17,6 +18,11 @@ namespace TwoB
 
         [JsonProperty("mal")]
         public MalConfig Mal { get; set; }
+
+        [JsonProperty("music-channel-ids")]
+        public ulong[] MusicChannelIds { get; set; }
+
+        public DiscordClient Client { get; set; }
 
         private static BotConfig instance;
 

@@ -9,6 +9,7 @@
     <PackageReference Include="DSharpPlus" Version="3.1.2" />
     <PackageReference Include="DSharpPlus.CommandsNext" Version="3.1.2" />
     <PackageReference Include="DSharpPlus.Interactivity" Version="3.1.2" />
+    <PackageReference Include="DSharpPlus.VoiceNext" Version="3.1.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,6 +17,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Data\waifudb.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ffmpeg.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="libopus.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="libsodium.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Music\Add Your Music Here.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -1,9 +1,12 @@
 {
   "token": "Your-Token",
   "prefix": "!",
-  "developers": [ 105455423691182080, 127408598010560513 ],
+  "developers": [ ],
+  "music-channel-ids": [
+
+  ],
   "mal": {
     "username": "user",
-    "pass" :  "pass"
+    "pass": "pass"
   }
 }
