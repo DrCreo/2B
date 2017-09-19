@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TwoB
@@ -21,8 +22,10 @@ namespace TwoB
         private List<VoiceNextConnection> _vncActiveList { get; set; }
         private AudioSenderManager _asManager { get; set; }
 
-        bool isWindows;
-        bool isLinux;
+        private bool _isWindows => RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+        private bool _isLinux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+
+        private byte[] _buffer { get; set; }
 
         /// <summary>
         /// Used to exit the music loop.
@@ -35,15 +38,24 @@ namespace TwoB
         /// </summary>
         public async void StartMusicModule()
         {
-
-            isWindows = System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-            isLinux = System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
-
             _client = BotConfig.Instance.Client;
             SetupVoiceNextClient();
             await ConnectToVoiceChannels();
             var t = Task.Run(() => TrackActiveChannelAsync()); ;
             var t2 = Task.Run(() => PlayMusicAsync());
+            var t3 = Task.Run(() => SendBufferAsync());
+        }
+
+        private async void SendBufferAsync()
+        {
+            byte[] lastBuffer = { };
+            while (playMusic)
+            {
+                if (_asManager != null && _buffer != null)
+
+                        await _asManager.SendAudio(_buffer, _vncActiveList);
+            }
+
         }
 
         /// <summary>
@@ -74,7 +86,6 @@ namespace TwoB
         /// </summary>
         private void SetupVoiceNextClient()
         {
-            //setup Voice nextClient
             _voice = _client.UseVoiceNext();
         }
 
@@ -85,7 +96,6 @@ namespace TwoB
         private async Task PlayMusicAsync()
         {
             var rand = new Random();
-            var nextUpdate = DateTime.Now.AddSeconds(5);
             var musicPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             musicPath = Path.Combine(musicPath, @"Music");
             var files = Directory.GetFiles(musicPath);
@@ -95,18 +105,17 @@ namespace TwoB
             try
             {
                 foreach (var vnc in _vncList)
-                {
                     await vnc.SendSpeakingAsync(true); // send a speaking indicator
-                }
+
                 while (playMusic)
                 {
-
                     var currentSong = files[rand.Next(files.Length)];
-
+                    
+                    //-loglevel quiet
                     var psi = new ProcessStartInfo
                     {
                         FileName = "ffmpeg",
-                        Arguments = $@"-i ""{currentSong}"" -ac 2 -f s16le -loglevel quiet -ar 48000 pipe:1",
+                        Arguments = $@"-i ""{currentSong}"" -ac 2 -f s16le  -ar 48000 pipe:1",
                         RedirectStandardOutput = true,
                         UseShellExecute = false,
                     };
@@ -123,66 +132,48 @@ namespace TwoB
                             for (var i = br; i < buff.Length; i++)
                                 buff[i] = 0;
 
-                        if (nextUpdate < DateTime.Now)
-                        {
-                            nextUpdate = DateTime.Now.AddSeconds(5);
-                        }
                         await _asManager.SendAudio(buff, _vncActiveList);
-
-                        /*foreach (var vnc in _vncList)
-                        {
-                            if (_connectionsWithUsers.Any(c => c.Channel.Id == vnc.Channel.Id))
-                                await vnc.SendAsync(buff, 20);
-                            else
-                        }*/
                     }
                 }
             }
             catch (Exception exc)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"{exc.Message}\n{exc.StackTrace}");
+                Console.ResetColor();
             }
 
         }
 
-
         private async Task TrackActiveChannelAsync()
         {
-            var vncCache = _vncList;
-            List<DiscordGuild> guilds = new List<DiscordGuild>();
-            List<DiscordMember> users = new List<DiscordMember>();
+            
+            var guilds = _vncList.Select(t => t.Channel.Guild).ToList();
 
-            foreach (var c in vncCache)
-                guilds.Add(c.Channel.Guild);
             try
             {
                 while (playMusic)
                 {
                     var tempActiveChannels = new List<VoiceNextConnection>();
-                    foreach (var g in guilds)
+                    foreach (var guild in guilds)
                     {
-                        var tempMembers = await g.GetAllMembersAsync();
+                        DiscordMember[] filteredMembers = guild.GetAllMembersAsync().Result
+                        // Make sure they're not a bot
+                        .Where(t => !t.IsBot)
+                        // Make sure they're participating in voice / have a channel.
+                        .Where(t => t.VoiceState != null && t.VoiceState.Channel != null)
+                        // Make sure the VNC channel ID is the same as the VoiceState ID
+                        .Where(t => _vncList.Any(v => v.Channel.Id == t.VoiceState.Channel.Id))
+                        .ToArray();
 
-                        foreach (var member in tempMembers)
-                        {
-                            if (!member.IsBot && member.VoiceState != null)
-                                foreach (var vnc in vncCache)
-                                {
-                                    try
-                                    {
-                                        if (member.VoiceState.Channel.Id == vnc.Channel.Id)
-                                            if (!tempActiveChannels.Contains(vnc))
-                                                tempActiveChannels.Add(vnc);
-                                    }
-                                    catch (Exception e)
-                                    {
-                                    }
-                                }
-                        }
-                        await Task.Delay(3000);
+                        foreach (var member in filteredMembers)
+                            foreach (var vnc in _vncList)
+                                if (vnc.Channel.Id == member.VoiceState.Channel.Id && !tempActiveChannels.Contains(vnc))
+                                    tempActiveChannels.Add(vnc);
                     }
                     Console.WriteLine($"Active Channel Count: {tempActiveChannels.Count}\n");
                     _vncActiveList = tempActiveChannels;
+                    await Task.Delay(3000);
                 }
             }
             catch (Exception e)
@@ -206,8 +197,8 @@ namespace TwoB
         /// <param name="currentSong"></param>
         private async void UpdatePlayingStatus(string currentSong)
         {
-            string[] strings; 
-            if (isWindows)
+            string[] strings;
+            if (_isWindows)
                 strings = currentSong.Split('\\');
             else
                 strings = currentSong.Split('/');
@@ -227,54 +218,5 @@ namespace TwoB
             await Task.Delay(0);
         }
 
-    }
-
-    class AudioSenderManager
-    {
-        public List<AudioSender> _audioSenders { get; private set; }
-
-
-
-        public AudioSenderManager(List<VoiceNextConnection> vncList)
-        {
-            _audioSenders = new List<AudioSender>();
-            foreach (var vnc in vncList)
-            {
-                _audioSenders.Add(new AudioSender(vnc));
-            }
-        }
-
-        public async Task SendAudio(byte[] buff, List<VoiceNextConnection> activeConnetionList)
-        {
-            foreach (var a in _audioSenders)
-            {
-                if (activeConnetionList.Any(acl => acl.Channel.Id == a.vnc.Channel.Id))
-                {
-                    await a.SendAudio(buff);
-                    //Console.WriteLine($"Audio Sent to {a.vnc.Channel.Name}\n");
-                }
-                else
-                {
-                    //Console.WriteLine($"No Audio Sent to {a.vnc.Channel.Name}\n");
-                }
-            }
-        }
-    }
-
-
-    class AudioSender
-    {
-
-        public VoiceNextConnection vnc { get; set; }
-
-        public AudioSender(VoiceNextConnection vnc)
-        {
-            this.vnc = vnc;
-        }
-
-        public async Task SendAudio(byte[] buff)
-        {
-            await vnc.SendAsync(buff, 20);
-        }
     }
 }
