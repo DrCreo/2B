@@ -1,6 +1,8 @@
 ﻿using DSharpPlus;
 using DSharpPlus.Entities;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace TwoB
@@ -35,6 +37,19 @@ namespace TwoB
         public static string ToStrLow(this bool _bool)
         {
             return _bool.ToString().ToLower();
+        }
+
+        
+    }
+
+    static class Helper
+    {
+        public static T[] ToArray<T>(this ICollection collection)
+        {
+            var items = new T[collection.Count];
+            collection.CopyTo(items, 0);
+
+            return items;
         }
     }
 }

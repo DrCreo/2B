@@ -31,6 +31,9 @@ namespace TwoB
         /// Used to exit the music loop.
         /// </summary>
         private bool playMusic = true;
+        private bool isFfmpegSuspended = false;
+
+
 
 
         /// <summary>
@@ -43,19 +46,6 @@ namespace TwoB
             await ConnectToVoiceChannels();
             var t = Task.Run(() => TrackActiveChannelAsync()); ;
             var t2 = Task.Run(() => PlayMusicAsync());
-            var t3 = Task.Run(() => SendBufferAsync());
-        }
-
-        private async void SendBufferAsync()
-        {
-            byte[] lastBuffer = { };
-            while (playMusic)
-            {
-                if (_asManager != null && _buffer != null)
-
-                        await _asManager.SendAudio(_buffer, _vncActiveList);
-            }
-
         }
 
         /// <summary>
@@ -78,6 +68,9 @@ namespace TwoB
 
                 vnc = await vnext.ConnectAsync(channel);
                 _vncList.Add(vnc);
+
+                // We are only connectiong one for now
+                break;
             }
         }
 
@@ -95,6 +88,13 @@ namespace TwoB
         /// <returns></returns>
         private async Task PlayMusicAsync()
         {
+            while (playMusic)
+                await StartMusicLoop();
+
+        }
+
+        private async Task StartMusicLoop()
+        {
             var rand = new Random();
             var musicPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             musicPath = Path.Combine(musicPath, @"Music");
@@ -110,7 +110,7 @@ namespace TwoB
                 while (playMusic)
                 {
                     var currentSong = files[rand.Next(files.Length)];
-                    
+
                     //-loglevel quiet
                     var psi = new ProcessStartInfo
                     {
@@ -124,10 +124,26 @@ namespace TwoB
 
                     UpdatePlayingStatus(currentSong);
 
+                    var d = DateTime.Now.AddSeconds(10);
+
                     var buff = new byte[3840];
                     var br = 0;
                     while ((br = ffout.Read(buff, 0, buff.Length)) > 0 && playMusic)
                     {
+                        while (_vncActiveList.Count == 0)
+                        {
+                            if (!isFfmpegSuspended)
+                            {
+                                isFfmpegSuspended = true;
+                                ffmpeg.Suspend();
+                            }
+                            await Task.Delay(1000);
+                        }
+                        if (isFfmpegSuspended)
+                        {
+                            isFfmpegSuspended = false;
+                            break;
+                        }
                         if (br < buff.Length)
                             for (var i = br; i < buff.Length; i++)
                                 buff[i] = 0;
@@ -142,12 +158,11 @@ namespace TwoB
                 Console.WriteLine($"{exc.Message}\n{exc.StackTrace}");
                 Console.ResetColor();
             }
-
         }
 
         private async Task TrackActiveChannelAsync()
         {
-            
+
             var guilds = _vncList.Select(t => t.Channel.Guild).ToList();
 
             try
@@ -171,7 +186,6 @@ namespace TwoB
                                 if (vnc.Channel.Id == member.VoiceState.Channel.Id && !tempActiveChannels.Contains(vnc))
                                     tempActiveChannels.Add(vnc);
                     }
-                    Console.WriteLine($"Active Channel Count: {tempActiveChannels.Count}\n");
                     _vncActiveList = tempActiveChannels;
                     await Task.Delay(3000);
                 }

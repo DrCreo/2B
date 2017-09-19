@@ -22,20 +22,8 @@ namespace TwoB
 
         public async Task SendAudio(byte[] buff, List<VoiceNextConnection> activeConnetionList)
         {
-
-            foreach (var a in _audioSenders)
-            {
-
-                if (activeConnetionList.Any(acl => acl.Channel.Id == a._vnc.Channel.Id))
-                {
-                    await a.SendAudio(buff);
-                    //Console.WriteLine($"Audio Sent to {a.vnc.Channel.Name}\n");
-                }
-                else
-                {
-                    //Console.WriteLine($"No Audio Sent to {a.vnc.Channel.Name}\n");
-                }
-            }
+            if (activeConnetionList.Contains(_audioSenders[0]._vnc))
+                await _audioSenders[0].SendAudio(buff);           
         }
     }
 }
