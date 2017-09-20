@@ -6,10 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DSharpPlus" Version="3.1.2" />
-    <PackageReference Include="DSharpPlus.CommandsNext" Version="3.1.2" />
-    <PackageReference Include="DSharpPlus.Interactivity" Version="3.1.2" />
-    <PackageReference Include="DSharpPlus.VoiceNext" Version="3.1.2" />
+    <PackageReference Include="DSharpPlus" Version="3.2.0-beta-00274" />
+    <PackageReference Include="DSharpPlus.CommandsNext" Version="3.2.0-beta-00274" />
+    <PackageReference Include="DSharpPlus.Interactivity" Version="3.2.0-beta-00274" />
+    <PackageReference Include="DSharpPlus.VoiceNext" Version="3.2.0-beta-00274" />
   </ItemGroup>
 
   <ItemGroup>
