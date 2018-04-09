@@ -25,7 +25,15 @@ namespace TwoB
             Initialize();
             SetUpEvents();
             InstallCommands();
-            _client.UseInteractivity();
+
+            var icfg = new InteractivityConfiguration()
+            {
+                PaginationBehaviour = TimeoutBehaviour.Delete,
+                PaginationTimeout = TimeSpan.FromSeconds(30),
+                Timeout = TimeSpan.FromSeconds(30)
+            };
+
+            _client.UseInteractivity(icfg);
 
             // Connect our client
             this._client.DebugLogger.Log("Connecting.");
@@ -95,7 +103,7 @@ namespace TwoB
                 SetupMusicModule();
 
                 // Lets set the Status to something.
-                await _client.UpdateStatusAsync(new Game("Emotions are Prohibited"));
+                await _client.UpdateStatusAsync(new DiscordGame("Emotions are Prohibited"));
             };
 
 

@@ -216,7 +216,7 @@ namespace TwoB
                 strings = currentSong.Split('\\');
             else
                 strings = currentSong.Split('/');
-            await _client.UpdateStatusAsync(new Game($"{strings[strings.Length - 1].Split('.')[0]} ~ [{_vncActiveList.Count}/{_vncList.Count}] Active Music Channels."));
+            await _client.UpdateStatusAsync(new DiscordGame($"{strings[strings.Length - 1].Split('.')[0]} ~ [{_vncActiveList.Count}/{_vncList.Count}] Active Music Channels."));
         }
 
         /// <summary>
